@@ -4,7 +4,16 @@ fn main() {
     {
         use std::io::Write;
         let mut res = winres::WindowsResource::new();
-        res.set_icon("../../res/icon.ico")
+        let branded = matches!(
+            std::env::var("PARISPCFIX_EDITION").as_deref(),
+            Ok("client") | Ok("admin")
+        );
+        let icon = if branded {
+            "../../flutter/windows/runner/resources/parispcfix.ico"
+        } else {
+            "../../res/icon.ico"
+        };
+        res.set_icon(icon)
             .set_language(winapi::um::winnt::MAKELANGID(
                 winapi::um::winnt::LANG_ENGLISH,
                 winapi::um::winnt::SUBLANG_ENGLISH_US,
@@ -12,7 +21,7 @@ fn main() {
             .set_manifest_file("../../res/manifest.xml");
         if let Ok(edition) = std::env::var("PARISPCFIX_EDITION") {
             if edition == "client" || edition == "admin" {
-                res.set_icon("../../flutter/windows/runner/resources/parispcfix.ico");
+
                 res.set("CompanyName", "PARISPCFIX")
                     .set("ProductName", "PARISPCFIX Remote Support")
                     .set("FileDescription", "PARISPCFIX Remote Support installer")
