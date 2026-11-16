@@ -27,6 +27,7 @@ jobs:
           cache: true
       - name: Generate the bridge in CI
         run: |
+          rustup component add rustfmt --toolchain 1.75
           cargo install cargo-expand --version 1.0.95 --locked
           cargo install flutter_rust_bridge_codegen --version 1.80.1 --features uuid --locked
           sed -i 's/extended_text: 14.0.0/extended_text: 13.0.0/g' flutter/pubspec.yaml
