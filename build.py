@@ -314,6 +314,11 @@ def linux_packaging_branch():
 
 def get_features(args):
     features = ['inline'] if not args.flutter else []
+    parispcfix_edition = os.environ.get('PARISPCFIX_EDITION', '')
+    if parispcfix_edition:
+        if parispcfix_edition not in ('client', 'admin'):
+            raise ValueError('PARISPCFIX_EDITION must be client or admin')
+        features.append('parispcfix-' + parispcfix_edition)
     if args.hwcodec:
         features.append('hwcodec')
     if args.vram:
@@ -967,22 +972,30 @@ def build_flutter_arch_manjaro(version, features):
 
 
 def build_flutter_windows(version, features, skip_portable_pack):
+    parispcfix_edition = os.environ.get('PARISPCFIX_EDITION', '')
+    executable = ('PARISPCFIX-' + parispcfix_edition.upper() + '.exe'
+                  if parispcfix_edition else 'rustdesk.exe')
     if not skip_cargo:
         system2(f'cargo build --locked --features {features} --lib --release')
         if not os.path.exists("target/release/librustdesk.dll"):
             print("cargo build failed, please check rust source code.")
             exit(-1)
     os.chdir('flutter')
-    system2('flutter build windows --release')
+    parispcfix_flags = (' --dart-define=PARISPCFIX=true'
+                       if os.environ.get('PARISPCFIX_EDITION') else '')
+    system2('flutter build windows --release' + parispcfix_flags)
     os.chdir('..')
     shutil.copy2('target/release/deps/dylib_virtual_display.dll',
                  flutter_build_dir_2)
+    if parispcfix_edition:
+        os.replace(os.path.join(flutter_build_dir_2, 'rustdesk.exe'),
+                   os.path.join(flutter_build_dir_2, executable))
     if skip_portable_pack:
         return
     os.chdir('libs/portable')
     system2('pip3 install -r requirements.txt')
     system2(
-        f'python3 ./generate.py -f ../../{flutter_build_dir_2} -o . -e ../../{flutter_build_dir_2}/rustdesk.exe')
+        f'python3 ./generate.py -f ../../{flutter_build_dir_2} -o . -e ../../{flutter_build_dir_2}/{executable}')
     os.chdir('../..')
     if os.path.exists('./rustdesk_portable.exe'):
         os.replace('./target/release/rustdesk-portable-packer.exe',
@@ -992,9 +1005,11 @@ def build_flutter_windows(version, features, skip_portable_pack):
                   './rustdesk_portable.exe')
     print(
         f'output location: {os.path.abspath(os.curdir)}/rustdesk_portable.exe')
-    os.rename('./rustdesk_portable.exe', f'./rustdesk-{version}-install.exe')
+    installer_name = (f'PARISPCFIX-{parispcfix_edition.upper()}-{version}-install.exe'
+                      if parispcfix_edition else f'rustdesk-{version}-install.exe')
+    os.replace('./rustdesk_portable.exe', './' + installer_name)
     print(
-        f'output location: {os.path.abspath(os.curdir)}/rustdesk-{version}-install.exe')
+        f'output location: {os.path.abspath(os.curdir)}/{installer_name}')
 
 
 def main():

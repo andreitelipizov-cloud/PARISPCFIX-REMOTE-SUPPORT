@@ -52,7 +52,11 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
+#ifdef PARISPCFIX
+IDI_APP_ICON            ICON                    "resources\\parispcfix.ico"
+#else
 IDI_APP_ICON            ICON                    "resources\\app_icon.ico"
+#endif
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -89,13 +93,32 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
+            #ifdef PARISPCFIX
+            VALUE "CompanyName", "PARISPCFIX" "\0"
+            VALUE "FileDescription", "PARISPCFIX Remote Support" "\0"
+            #else
             VALUE "CompanyName", "Purslane Tech Pte. Ltd." "\0"
             VALUE "FileDescription", "RustDesk Remote Desktop" "\0"
+            #endif
             VALUE "FileVersion", VERSION_AS_STRING "\0"
+            #ifdef PARISPCFIX
+            VALUE "InternalName", "PARISPCFIX Remote Support" "\0"
+            #else
             VALUE "InternalName", "rustdesk" "\0"
+            #endif
             VALUE "LegalCopyright", "Copyright © 2026 Purslane Tech Pte. Ltd. All rights reserved." "\0"
+            #ifdef PARISPCFIX_CLIENT
+            VALUE "OriginalFilename", "PARISPCFIX-CLIENT.exe" "\0"
+            #elif defined(PARISPCFIX)
+            VALUE "OriginalFilename", "PARISPCFIX-ADMIN.exe" "\0"
+            #else
             VALUE "OriginalFilename", "rustdesk.exe" "\0"
+            #endif
+            #ifdef PARISPCFIX
+            VALUE "ProductName", "PARISPCFIX Remote Support" "\0"
+            #else
             VALUE "ProductName", "RustDesk" "\0"
+            #endif
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

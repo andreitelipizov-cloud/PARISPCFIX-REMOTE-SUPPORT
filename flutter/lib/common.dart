@@ -29,6 +29,7 @@ import 'package:window_manager/window_manager.dart';
 import 'package:window_size/window_size.dart' as window_size;
 
 import '../consts.dart';
+import 'parispcfix/brand.dart';
 import 'common/widgets/overlay.dart';
 import 'mobile/pages/file_manager_page.dart';
 import 'mobile/pages/remote_page.dart';
@@ -249,7 +250,8 @@ class MyTheme {
   MyTheme._();
 
   static const Color grayBg = Color(0xFFEFEFF2);
-  static const Color accent = Color(0xFF0071FF);
+  static const Color accent =
+      parisPcFixEnabled ? Color(0xFF00C6D6) : Color(0xFF0071FF);
   static const Color accent50 = Color(0x770071FF);
   static const Color accent80 = Color(0xAA0071FF);
   static const Color canvasColor = Color(0xFF212121);
@@ -3771,6 +3773,7 @@ Color? disabledTextColor(BuildContext context, bool enabled) {
 }
 
 Widget loadPowered(BuildContext context) {
+  if (parisPcFixEnabled) return const SizedBox.shrink();
   if (bind.mainGetBuildinOption(key: "hide-powered-by-me") == 'Y') {
     return SizedBox.shrink();
   }
@@ -3859,9 +3862,14 @@ class _LogoState extends State<_Logo> {
 }
 
 // max 300 x 60
-Widget loadLogo() => const _Logo();
+Widget loadLogo() =>
+    parisPcFixEnabled ? const ParisPcFixBrand() : const _Logo();
 
 Widget loadIcon(double size) {
+  if (parisPcFixEnabled) {
+    return SvgPicture.asset('assets/parispcfix-mark.svg',
+        width: size, height: size);
+  }
   return Image.asset('assets/icon.png',
       width: size,
       height: size,

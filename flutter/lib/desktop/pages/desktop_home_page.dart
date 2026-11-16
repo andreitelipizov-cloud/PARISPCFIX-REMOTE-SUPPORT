@@ -24,6 +24,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:window_size/window_size.dart' as window_size;
 import '../widgets/button.dart';
+import '../../parispcfix/brand.dart';
 
 class DesktopHomePage extends StatefulWidget {
   const DesktopHomePage({Key? key}) : super(key: key);
@@ -59,7 +60,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
   Widget build(BuildContext context) {
     super.build(context);
     final isIncomingOnly = bind.isIncomingOnly();
-    return _buildBlock(
+    return ParisPcFixBackdrop(child: _buildBlock(
         child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -67,7 +68,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
         if (!isIncomingOnly) const VerticalDivider(width: 1),
         if (!isIncomingOnly) Expanded(child: buildRightPane(context)),
       ],
-    ));
+    )));
   }
 
   Widget _buildBlock({required Widget child}) {
@@ -130,7 +131,9 @@ class _DesktopHomePageState extends State<DesktopHomePage>
       value: gFFI.serverModel,
       child: Container(
         width: isIncomingOnly ? 280.0 : 200.0,
-        color: Theme.of(context).colorScheme.background,
+        color: parisPcFixEnabled
+            ? const Color(0xD9041428)
+            : Theme.of(context).colorScheme.background,
         child: Stack(
           children: [
             Column(
@@ -180,7 +183,9 @@ class _DesktopHomePageState extends State<DesktopHomePage>
 
   buildRightPane(BuildContext context) {
     return Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
+      color: parisPcFixEnabled
+          ? const Color(0xAA031222)
+          : Theme.of(context).scaffoldBackgroundColor,
       child: ConnectionPage(),
     );
   }

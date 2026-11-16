@@ -299,16 +299,21 @@ async fn start_query_session_count(sender: std::sync::mpsc::Sender<Data>) {
 }
 
 fn load_icon_from_asset() -> Option<image::DynamicImage> {
+    let icon_file = if cfg!(feature = "parispcfix") {
+        "parispcfix-icon.png"
+    } else {
+        "icon.png"
+    };
     let Some(path) = std::env::current_exe().map_or(None, |x| x.parent().map(|x| x.to_path_buf()))
     else {
         return None;
     };
     #[cfg(target_os = "macos")]
-    let path = path.join("../Frameworks/App.framework/Resources/flutter_assets/assets/icon.png");
+    let path = path.join(format!("../Frameworks/App.framework/Resources/flutter_assets/assets/{icon_file}"));
     #[cfg(windows)]
-    let path = path.join(r"data\flutter_assets\assets\icon.png");
+    let path = path.join(format!(r"data\flutter_assets\assets\{icon_file}"));
     #[cfg(target_os = "linux")]
-    let path = path.join(r"data/flutter_assets/assets/icon.png");
+    let path = path.join(format!("data/flutter_assets/assets/{icon_file}"));
     if path.exists() {
         if let Ok(image) = image::open(path) {
             return Some(image);

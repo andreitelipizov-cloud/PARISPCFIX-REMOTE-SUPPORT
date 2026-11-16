@@ -6,6 +6,16 @@ project(rustdesk LANGUAGES CXX)
 # the on-disk name of your application.
 set(BINARY_NAME "rustdesk")
 
+if(DEFINED ENV{PARISPCFIX_EDITION} AND NOT "$ENV{PARISPCFIX_EDITION}" STREQUAL "")
+  if(NOT "$ENV{PARISPCFIX_EDITION}" MATCHES "^(client|admin)$")
+    message(FATAL_ERROR "PARISPCFIX_EDITION must be client or admin")
+  endif()
+  add_compile_definitions(PARISPCFIX)
+  if("$ENV{PARISPCFIX_EDITION}" STREQUAL "client")
+    add_compile_definitions(PARISPCFIX_CLIENT)
+  endif()
+endif()
+
 # Explicitly opt into modern CMake behaviors to avoid warnings with recent
 # versions of CMake.
 cmake_policy(SET CMP0063 NEW)

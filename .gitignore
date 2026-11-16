@@ -60,3 +60,9 @@ flutter/web/
 /third_party/libdrmtap/
 # Local git worktrees
 .worktrees/
+.parispcfix-tools/
+parispcfix/dist/
+!flutter/assets/parispcfix-night.png
+!flutter/assets/parispcfix-icon.png
+!flutter/assets/parispcfix-mark.svg
+!libs/portable/src/res/parispcfix-label.png

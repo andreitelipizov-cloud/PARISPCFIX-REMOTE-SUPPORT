@@ -957,6 +957,12 @@ pub fn get_langs() -> String {
     let mut x: Vec<(&str, String)> = crate::lang::LANGS
         .iter()
         .filter(|a| !hide_cjk || !crate::lang::is_cjk_lang(a.0))
+        .filter(|_entry| {
+            #[cfg(feature = "parispcfix")]
+            return crate::parispcfix::LANGUAGES.contains(&_entry.0);
+            #[cfg(not(feature = "parispcfix"))]
+            return true;
+        })
         .map(|a| (a.0, format!("{} ({})", a.1, a.0)))
         .collect();
     x.sort_by(|a, b| a.0.cmp(b.0));

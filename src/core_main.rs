@@ -43,6 +43,10 @@ fn finish_macos_update(result: hbb_common::ResultType<()>) -> Option<CoreMainAct
 /// If it returns [`Some`], the action determines whether to start the UI or report failure.
 #[cfg(not(any(target_os = "android", target_os = "ios")))]
 pub fn core_main() -> Option<CoreMainAction> {
+    #[cfg(feature = "parispcfix")]
+    if let Err(err) = crate::parispcfix::initialize() {
+        return Some(CoreMainAction::ExitFailure(err));
+    }
     if !crate::common::global_init() {
         return None;
     }
