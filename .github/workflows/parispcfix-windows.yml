@@ -2,6 +2,13 @@ name: PARISPCFIX Windows installers
 
 on:
   workflow_dispatch:
+  push:
+    branches: [master]
+    paths:
+      - 'flutter/lib/parispcfix/**'
+      - 'flutter/lib/desktop/pages/desktop_home_page.dart'
+      - 'flutter/test/parispcfix_brand_test.dart'
+      - 'build.py'
 
 permissions:
   contents: read
@@ -111,6 +118,8 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'Flutter dependencies failed' }
           flutter analyze lib/parispcfix/brand.dart
           if ($LASTEXITCODE -ne 0) { throw 'Brand analysis failed' }
+          flutter test test/parispcfix_brand_test.dart --dart-define=PARISPCFIX=true --dart-define=PARISPCFIX_EDITION=$env:PARISPCFIX_EDITION
+          if ($LASTEXITCODE -ne 0) { throw 'Client branding layout tests failed' }
       - name: Build the integrated application and installer
         shell: pwsh
         run: |

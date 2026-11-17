@@ -130,9 +130,9 @@ class _DesktopHomePageState extends State<DesktopHomePage>
     return ChangeNotifierProvider.value(
       value: gFFI.serverModel,
       child: Container(
-        width: isIncomingOnly ? 280.0 : 200.0,
+        width: parisPcFixEnabled ? (isIncomingOnly ? 320.0 : 250.0) : (isIncomingOnly ? 280.0 : 200.0),
         color: parisPcFixEnabled
-            ? const Color(0xD9041428)
+            ? const Color(0xC0061423)
             : Theme.of(context).colorScheme.background,
         child: Stack(
           children: [
@@ -182,19 +182,42 @@ class _DesktopHomePageState extends State<DesktopHomePage>
   }
 
   buildRightPane(BuildContext context) {
+    if (!parisPcFixEnabled) {
+      return Container(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        child: ConnectionPage(),
+      );
+    }
     return Container(
-      color: parisPcFixEnabled
-          ? const Color(0xAA031222)
-          : Theme.of(context).scaffoldBackgroundColor,
-      child: ConnectionPage(),
+      margin: const EdgeInsets.all(16),
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: const Color(0xB3081B2C),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: ParisPcFixStyle.border),
+      ),
+      child: Column(children: [
+        const ParisPcFixWorkspaceHeader(),
+        const Divider(height: 1, color: ParisPcFixStyle.border),
+        Expanded(child: ConnectionPage()),
+      ]),
     );
   }
 
   buildIDBoard(BuildContext context) {
     final model = gFFI.serverModel;
     return Container(
-      margin: const EdgeInsets.only(left: 20, right: 11),
-      height: 57,
+      margin: parisPcFixEnabled
+          ? const EdgeInsets.fromLTRB(14, 8, 14, 4)
+          : const EdgeInsets.only(left: 20, right: 11),
+      padding: parisPcFixEnabled ? const EdgeInsets.all(12) : null,
+      decoration: parisPcFixEnabled
+          ? BoxDecoration(
+              color: const Color(0xB3081B2C),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: ParisPcFixStyle.border))
+          : null,
+      height: parisPcFixEnabled ? 108 : 57,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.baseline,
         textBaseline: TextBaseline.alphabetic,
@@ -244,7 +267,9 @@ class _DesktopHomePageState extends State<DesktopHomePage>
                           contentPadding: EdgeInsets.only(top: 10, bottom: 10),
                         ),
                         style: TextStyle(
-                          fontSize: 22,
+                          fontSize: parisPcFixEnabled ? 27 : 22,
+                          fontWeight: parisPcFixEnabled ? FontWeight.w700 : null,
+                          letterSpacing: parisPcFixEnabled ? 1.2 : null,
                         ),
                       ).workaroundFreezeLinuxMint(),
                     ),
@@ -300,7 +325,16 @@ class _DesktopHomePageState extends State<DesktopHomePage>
     final showOneTime = model.approveMode != 'click' &&
         model.verificationMethod != kUsePermanentPassword;
     return Container(
-      margin: EdgeInsets.only(left: 20.0, right: 16, top: 13, bottom: 13),
+      margin: parisPcFixEnabled
+          ? const EdgeInsets.fromLTRB(14, 10, 14, 16)
+          : EdgeInsets.only(left: 20.0, right: 16, top: 13, bottom: 13),
+      padding: parisPcFixEnabled ? const EdgeInsets.all(12) : null,
+      decoration: parisPcFixEnabled
+          ? BoxDecoration(
+              color: const Color(0xB3081B2C),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: ParisPcFixStyle.border))
+          : null,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.baseline,
         textBaseline: TextBaseline.alphabetic,
@@ -341,7 +375,11 @@ class _DesktopHomePageState extends State<DesktopHomePage>
                               contentPadding:
                                   EdgeInsets.only(top: 14, bottom: 10),
                             ),
-                            style: TextStyle(fontSize: 15),
+                            style: TextStyle(
+                              fontSize: parisPcFixEnabled ? 20 : 15,
+                              fontWeight: parisPcFixEnabled ? FontWeight.w600 : null,
+                              letterSpacing: parisPcFixEnabled ? 1.5 : null,
+                            ),
                           ).workaroundFreezeLinuxMint(),
                         ),
                       ),
@@ -1132,3 +1170,4 @@ void setPasswordDialog({VoidCallback? notEmptyCallback}) async {
     );
   });
 }
+

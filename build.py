@@ -982,7 +982,8 @@ def build_flutter_windows(version, features, skip_portable_pack):
             exit(-1)
     os.chdir('flutter')
     parispcfix_flags = (' --dart-define=PARISPCFIX=true'
-                       if os.environ.get('PARISPCFIX_EDITION') else '')
+                       + ' --dart-define=PARISPCFIX_EDITION=' + parispcfix_edition
+                       if parispcfix_edition else '')
     system2('flutter build windows --release' + parispcfix_flags)
     os.chdir('..')
     shutil.copy2('target/release/deps/dylib_virtual_display.dll',
@@ -1203,3 +1204,4 @@ def md5_file_folder(base_dir):
 
 if __name__ == "__main__":
     main()
+
