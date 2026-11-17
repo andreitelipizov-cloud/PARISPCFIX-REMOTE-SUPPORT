@@ -151,7 +151,11 @@ def package_linux(output, edition, arch):
     (control / "control").write_text(
         f"Package: {package}\nVersion: {version()}\nArchitecture: amd64\n"
         "Maintainer: PARISPCFIX\nSection: net\nPriority: optional\n"
-        "Depends: libgtk-3-0, libayatana-appindicator3-1, libasound2, libpulse0, libxdo3, libva2\n"
+        "Depends: libgtk-3-0t64 | libgtk-3-0, libayatana-appindicator3-1, "
+        "libasound2t64 | libasound2, libpulse0, libxdo3 | libxdo4, libva2, "
+        "libva-drm2, libva-x11-2, libxcb-randr0, libxcb-shape0, libxcb-xfixes0, "
+        "libxfixes3, libsystemd0, libgstreamer-plugins-base1.0-0, "
+        "gstreamer1.0-pipewire, curl\n"
         f"Description: {name} remote support for the current desktop session\n",
         encoding="utf-8")
     applications = deb_root / "usr/share/applications"
