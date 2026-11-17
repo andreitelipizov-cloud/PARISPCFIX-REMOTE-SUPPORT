@@ -5,6 +5,8 @@ on:
   push:
     branches: [master]
     paths:
+      - '.github/workflows/parispcfix-windows.yml'
+      - 'parispcfix/patch_flutter.py'
       - 'flutter/lib/parispcfix/**'
       - 'flutter/lib/desktop/pages/desktop_home_page.dart'
       - 'flutter/test/parispcfix_brand_test.dart'
@@ -95,7 +97,7 @@ jobs:
           Expand-Archive windows-x64-release.zip windows-x64-release
           $flutterRoot = Split-Path (Split-Path (Get-Command flutter).Source)
           Copy-Item windows-x64-release/* "$flutterRoot/bin/cache/artifacts/engine/windows-x64-release/" -Recurse -Force
-          git -C $flutterRoot apply "$PWD/.github/patches/flutter_3.24.4_dropdown_menu_enableFilter.diff"
+          python parispcfix/patch_flutter.py
           if ($LASTEXITCODE -ne 0) { throw 'Flutter patch failed' }
       - uses: dtolnay/rust-toolchain@e97e2d8cc328f1b50210efc529dca0028893a2d9
         with:

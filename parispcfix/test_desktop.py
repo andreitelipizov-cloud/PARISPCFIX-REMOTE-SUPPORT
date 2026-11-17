@@ -4,9 +4,24 @@ import tempfile
 import unittest
 
 import build_desktop as build
+from patch_flutter import apply_once
 
 
 class PackagingTests(unittest.TestCase):
+    def test_cached_flutter_patch_is_repeatable_and_rejects_incompatible_sdk(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            source = root / "example.txt"
+            source.write_bytes(b"before\n")
+            patch = root / "sdk.patch"
+            patch.write_bytes(b"diff --git a/example.txt b/example.txt\n--- a/example.txt\n+++ b/example.txt\n@@ -1 +1 @@\n-before\n+after\n")
+            apply_once(root, patch)
+            apply_once(root, patch)
+            self.assertEqual(source.read_text(encoding="utf-8"), "after\n")
+            source.write_bytes(b"incompatible\n")
+            with self.assertRaises(RuntimeError):
+                apply_once(root, patch)
+
     def test_checksum_manifest_verifies_downloaded_packages(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

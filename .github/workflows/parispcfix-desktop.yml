@@ -7,6 +7,7 @@ on:
     paths:
       - '.github/workflows/parispcfix-desktop.yml'
       - 'parispcfix/build_desktop.py'
+      - 'parispcfix/patch_flutter.py'
       - 'parispcfix/DESKTOP-RELEASE.md'
       - 'flutter/lib/parispcfix/**'
       - 'flutter/lib/desktop/pages/desktop_home_page.dart'
@@ -81,8 +82,7 @@ jobs:
             flutter config --no-enable-swift-package-manager
             bash .github/patches/apply_flutter_3.44_source_patches.sh
           else
-            flutter_root="$(dirname "$(dirname "$(command -v flutter)")")"
-            git -C "$flutter_root" apply "$GITHUB_WORKSPACE/.github/patches/flutter_3.24.4_dropdown_menu_enableFilter.diff"
+            python parispcfix/patch_flutter.py
           fi
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
         with:
