@@ -5,6 +5,10 @@ on:
   push:
     branches: [master]
     paths:
+      - 'src/parispcfix.rs'
+      - 'src/parispcfix/**'
+      - 'src/client.rs'
+      - 'src/server/connection.rs'
       - '.github/workflows/parispcfix-windows.yml'
       - 'parispcfix/patch_flutter.py'
       - 'flutter/lib/parispcfix/**'
@@ -16,6 +20,17 @@ permissions:
   contents: read
 
 jobs:
+  security:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          persist-credentials: false
+      - name: Reject unprotected PARISPCFIX sessions
+        run: |
+          rustc --edition=2021 --test src/parispcfix/security.rs -o "$RUNNER_TEMP/parispcfix-security-tests"
+          "$RUNNER_TEMP/parispcfix-security-tests"
+
   bridge:
     runs-on: ubuntu-22.04
     steps:
@@ -56,7 +71,7 @@ jobs:
           if-no-files-found: error
 
   windows:
-    needs: bridge
+    needs: [bridge, security]
     runs-on: windows-2022
     strategy:
       fail-fast: false
@@ -127,7 +142,7 @@ jobs:
         run: |
           python3 build.py --portable --flutter --hwcodec --vram
           if ($LASTEXITCODE -ne 0) { throw 'Application build failed' }
-          cargo test --locked --release --lib --features "flutter,hwcodec,vram,parispcfix-$env:PARISPCFIX_EDITION" parispcfix::tests
+          cargo test --locked --release --lib --features "flutter,hwcodec,vram,parispcfix-$env:PARISPCFIX_EDITION" parispcfix::
           if ($LASTEXITCODE -ne 0) { throw 'Branding tests failed' }
       - name: Include licenses and build provenance
         shell: pwsh

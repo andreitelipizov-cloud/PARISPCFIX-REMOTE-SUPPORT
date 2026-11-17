@@ -400,6 +400,13 @@ impl Client {
                 }
             }
             Ok(x) => {
+                #[cfg(feature = "parispcfix")]
+                if let Err(error) = crate::parispcfix::security::check_outgoing(
+                    x.0 .0.is_secured(),
+                    x.0 .2.is_some(),
+                ) {
+                    bail!("{}", error);
+                }
                 // Set x.2 to true only in the connect() function to indicate that direct_failures needs to be updated; everywhere else it should be set to false.
                 if x.2 {
                     let direct_failures = interface.get_lch().read().unwrap().direct_failures;

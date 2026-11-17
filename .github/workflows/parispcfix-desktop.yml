@@ -5,6 +5,10 @@ on:
   push:
     branches: [master, 'parispcfix/desktop-design']
     paths:
+      - 'src/parispcfix.rs'
+      - 'src/parispcfix/**'
+      - 'src/client.rs'
+      - 'src/server/connection.rs'
       - '.github/workflows/parispcfix-desktop.yml'
       - 'parispcfix/build_desktop.py'
       - 'parispcfix/patch_flutter.py'
@@ -21,12 +25,23 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  security:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          persist-credentials: false
+      - name: Reject unprotected PARISPCFIX sessions
+        run: |
+          rustc --edition=2021 --test src/parispcfix/security.rs -o "$RUNNER_TEMP/parispcfix-security-tests"
+          "$RUNNER_TEMP/parispcfix-security-tests"
+
   bridge:
     uses: ./.github/workflows/bridge.yml
 
   desktop:
     name: ${{ matrix.platform.label }} / ${{ matrix.edition }}
-    needs: bridge
+    needs: [bridge, security]
     runs-on: ${{ matrix.platform.runner }}
     timeout-minutes: 150
     strategy:

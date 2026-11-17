@@ -532,6 +532,11 @@ impl Connection {
         meta: super::ConnectionMeta,
         unauthorized: UnauthorizedID,
     ) {
+        #[cfg(feature = "parispcfix")]
+        if let Err(error) = crate::parispcfix::security::check_incoming(stream.is_secured()) {
+            hbb_common::throttled_log!(std::time::Duration::from_secs(60), warn, "{}", error);
+            return;
+        }
         let super::ConnectionMeta {
             control_permissions,
             controlled_context,

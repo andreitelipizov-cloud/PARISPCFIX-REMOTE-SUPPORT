@@ -3,6 +3,8 @@ use hbb_common::{anyhow::anyhow, config, ResultType};
 #[cfg(all(feature = "parispcfix-client", feature = "parispcfix-admin"))]
 compile_error!("Build the PARISPCFIX client and administrator editions separately.");
 
+pub mod security;
+
 pub const LANGUAGES: &[&str] = &["ru", "ro", "uk", "en", "fr"];
 
 pub fn app_name() -> &'static str {
